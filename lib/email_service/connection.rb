@@ -15,7 +15,7 @@ module EmailService
       begin
         response = yield
 
-        raise ApiError, response.to_s unless response.code == 200
+        raise ApiError, response.to_s unless (200..299).include?(response.code)
       rescue ApiError => error
         @retries += 1
         if @retries > EmailService.config.max_retries
