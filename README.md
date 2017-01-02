@@ -1,36 +1,67 @@
 # EmailService
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/email_service`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is a simple service which sends emails. It works as a standalone gem, but it also provides a simple CLI.
+Currently, there are two email service providers covered:
+ - Mailgun
+ - SendGrid
 
-TODO: Delete this and the text above, and describe your gem
+It also simple `Fake` provider, which just marks email as sent, without actually sending it.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'email_service'
+gem "email_service", github: "krzyzak/email_service"
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
 
-    $ gem install email_service
+## Configuration
 
+In order to send emails, you have to configure your providers - `SendGrid` requires `API_KEY` only, whereas `Mailgun` requires `API_KEY`, `API_URL`. You’d probably want to pass `FROM` to configuration file (which will be used instead of `#from` passed by `email` object) too.
+
+All credentials are being stored in the `email_service.yml` file - you can use `email_service.yml.example` as as reference.
+
+You can adjust other settings by calling:
+
+```ruby
+EmailService.configuration do |config|
+  config.env = "production" # specifies environment. Each environment uses different credentials for providers
+  config.max_retries = 10 # Maximum retry count for each provider
+  config.retry_formula = ->(n){ n } # Returns how long ruby sleeps between retries for N-th retry
+  config.logger = ->(env){ MyCustomLogger.new(env) }
+end
+```
 ## Usage
 
-TODO: Write usage instructions here
+### As a CLI
 
-## Development
+After you install & configure the application, usage is as easy as
+```
+bin/email_service send --from="hello@example.com" --to="another@exaple.com" --subject="Sample subject" --text="Hello from my email service!"
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### As a Gem
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+After you add a gem as a part of your `Gemfile`, you can create an email:
+```ruby
+email = EmailService::Email.new({
+  from: "hello@example.com",
+  to: "another@example.com",
+  subject: "Some subject",
+  text: "Hello from my email service!",
+})
+```
+
+then, you should use either of two methods:
+
+`email.send`, or `email.send!` – both method returns an instance of `EmailService::Email`, which responds to `#sent?` and `#error?` methods. The only difference is that the `#send!` method will raise `EmailService::NoMoreProviders` exception, once it will fail on the last provider.
+
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/email_service.
-
