@@ -1,8 +1,9 @@
 require "http"
-
 module EmailService
   module Provider
     class SendGrid
+      attr_reader :settings
+
       API_URL = "https://api.sendgrid.com/v3/mail/send".freeze
 
       def initialize(settings = {})
