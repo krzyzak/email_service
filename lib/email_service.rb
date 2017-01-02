@@ -23,9 +23,10 @@ module EmailService
   setting :retry_formula, ->(n){ 2**n }
   setting :Mailgun
   setting :SendGrid
+  setting :logger, ->(env){ Logger.new("log/#{env}.log") }
 
   def self.logger
-    @logger ||= Logger.new("log/#{config.env}.log")
+    @logger ||= config.logger.call(config.env)
   end
 
   def self.configure!
