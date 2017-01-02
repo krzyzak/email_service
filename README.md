@@ -5,7 +5,7 @@ Currently, there are two email service providers covered:
  - Mailgun
  - SendGrid
 
-It also simple `Fake` provider, which just marks email as sent, without actually sending it.
+It also contains simple `Fake` provider, which just marks email as sent, without actually sending it.
 
 ## Installation
 
