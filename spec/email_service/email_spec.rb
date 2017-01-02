@@ -62,4 +62,21 @@ describe EmailService::Email do
       expect { subject.new(data) }.to raise_error(Dry::Struct::Error)
     end
   end
+
+  describe "failover technique" do
+    before do
+      EmailService.configure do |config|
+        config.env = "test"
+        config.max_retries = 0
+        config.providers = [EmailService::Provider::Mailgun, EmailService::Provider::SendGrid]
+      end
+    end
+
+    it "switches from MailGun to SendGrid" do
+      expect_any_instance_of(EmailService::Provider::Mailgun).to receive(:send).with(valid_email).and_raise(EmailService::Connection::Error)
+      expect_any_instance_of(EmailService::Provider::SendGrid).to receive(:send).with(valid_email).and_raise(EmailService::Connection::Error)
+
+      valid_email.send
+    end
+  end
 end
