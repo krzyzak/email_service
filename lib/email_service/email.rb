@@ -12,6 +12,19 @@ module EmailService
       !!@sent
     end
 
+    def error?
+      !!@error
+    end
+
+    def send(provider = nil)
+      begin
+        send!(provider)
+      rescue Connection::NoMoreProviders
+        @error = true
+      end
+      self
+    end
+
     def send!(provider = nil)
       begin
         provider ||= fetch_provider!
