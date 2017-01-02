@@ -1,0 +1,7 @@
+development:
+  Mailgun:
+    api_url: "URL_GIVEN_FROM_MAILGUN"
+    api_key: "MAILGUN_API_KEY"
+    from: "DEFAULT_FROM"
+  SendGrid:
+    api_key: "SENDGRID_API_KEY"

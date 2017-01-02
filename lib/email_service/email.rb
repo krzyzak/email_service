@@ -1,14 +1,12 @@
 module EmailService
-  class Email
+  class Email < Dry::Struct
+    constructor_type :strict
     attr_reader :provider
 
-    PROVIDERS = [
-      Provider::Fake
-    ]
-
-    def initialize
-      @providers = PROVIDERS.dup
-    end
+    attribute :text, Types::String
+    attribute :from, Types::String
+    attribute :to, Types::String
+    attribute :subject, Types::String
 
     def sent?
       !!@sent
@@ -16,22 +14,29 @@ module EmailService
 
     def send!(provider = nil)
       begin
-        provider ||= fetch_provider
+        provider ||= fetch_provider!
+        EmailService.logger.debug "Switching to #{provider.class}..."
         provider.send(self)
         mark_as_sent!(provider)
-      rescue Provider::Error
+        EmailService.logger.debug "Email successfully send!"
+      rescue Connection::Error
+        provider = nil
         retry
       end
     end
 
     private
+    def providers
+      @providers ||= EmailService.config.providers.dup
+    end
+
     def mark_as_sent!(provider)
       @sent = true
       @provider = provider.class
     end
 
     def fetch_provider!
-      klass = @providers.pop || (raise Provider::ProviderNotFound)
+      klass = providers.shift || (raise Connection::NoMoreProviders)
       klass.new
     end
   end

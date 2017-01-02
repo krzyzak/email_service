@@ -1,8 +1,7 @@
 module EmailService
   module Provider
     require "email_service/provider/fake"
-
-    Error = Class.new(StandardError)
-    ProviderNotFound = Class.new(StandardError)
+    require "email_service/provider/send_grid"
+    require "email_service/provider/mailgun"
   end
 end
