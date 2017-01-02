@@ -50,7 +50,8 @@ module EmailService
 
     def fetch_provider!
       klass = providers.shift || (raise Connection::NoMoreProviders)
-      klass.new
+
+      klass.new(EmailService.config[klass.name.split("::").last])
     end
   end
 end
