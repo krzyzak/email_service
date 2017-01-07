@@ -1,4 +1,4 @@
-# EmailService
+# EmailService ![CI Status](https://circleci.com/gh/krzyzak/email_service.svg?style=shield&circle-token=:circle-token)
 
 This is a simple service which sends emails. It works as a standalone gem, but it also provides a simple CLI.
 Currently, there are two email service providers covered:
