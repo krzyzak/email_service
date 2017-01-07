@@ -60,3 +60,8 @@ email = EmailService::Email.new({
 then, you should use either of two methods:
 
 `email.send`, or `email.send!` – both method returns an instance of `EmailService::Email`, which responds to `#sent?` and `#error?` methods. The only difference is that the `#send!` method will raise `EmailService::NoMoreProviders` exception, once it will fail on the last provider.
+
+
+## Testing
+
+You can run test suite by calling `rspec`
