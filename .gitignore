@@ -8,4 +8,4 @@
 /spec/reports/
 /tmp/
 /email_service.yml
-/log/*
+/log/*.log
